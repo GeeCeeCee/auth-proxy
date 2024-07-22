@@ -7,12 +7,14 @@ import { CreateUserDto, ValidateUserDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
+import { LoggerService } from 'src/common/logger/logger.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly logger: LoggerService,
   ) {}
 
   async createUser(userInfo: CreateUserDto) {
@@ -36,7 +38,10 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(userInfo.password, user.password))) {
       const token = await this.generateToken(user);
-      return { access_token: token };
+      this.logger.log('User was validated successfully');
+      return {
+        access_token: token,
+      };
     }
 
     throw new UnauthorizedException('Invalid email or password');

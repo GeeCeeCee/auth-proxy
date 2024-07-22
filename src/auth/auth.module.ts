@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { UsersModule } from 'src/users/users.module';
+import { LoggerModule } from 'src/common/logger/logger.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UsersModule } from 'src/users/users.module';
       }),
     }),
     forwardRef(() => UsersModule),
+    LoggerModule,
   ],
   providers: [AuthService, JwtAuthGuard],
   controllers: [AuthController],

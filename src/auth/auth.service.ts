@@ -21,6 +21,7 @@ export class AuthService {
     const userExists = await this.usersService.userExists(userInfo.email);
 
     if (userExists) {
+      this.logger.error('User already exists.');
       throw new ConflictException('User already exists');
     }
 
@@ -30,7 +31,7 @@ export class AuthService {
       password: hashedPassword,
     });
     this.usersService.createUser(userInfo);
-    console.log('Created user');
+    this.logger.error('User Created.');
   }
 
   async validateUser(userInfo: ValidateUserDto) {
@@ -44,6 +45,7 @@ export class AuthService {
       };
     }
 
+    this.logger.log('User could not be validated');
     throw new UnauthorizedException('Invalid email or password');
   }
 

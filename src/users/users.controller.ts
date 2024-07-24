@@ -8,12 +8,14 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Import JwtAuthGuard
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Throttle({ default: { limit: 5, ttl: 5000 } })
   @Get()
   async getAllUsers(@Query('email') email: string) {
     if (!email) {
@@ -25,6 +27,10 @@ export class UsersController {
       throw new NotFoundException('User not found');
     }
 
-    return user;
+    return {
+      id: user['_id'],
+      name: user.name,
+      email: user.email,
+    };
   }
 }
